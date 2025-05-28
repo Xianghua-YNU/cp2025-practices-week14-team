@@ -74,61 +74,55 @@ def plot_phase_space(states: np.ndarray, title: str) -> None:
     plt.axis('equal')
     plt.show()
 
-def analyze_limit_cycle(t: np.ndarray, states: np.ndarray, 
-                       skip_ratio: float = 0.5) -> Tuple[float, float]:
-    """分析极限环的特征（振幅和周期）。
-    
-    Args:
-        t: 时间数组
-        states: 状态数组
-        skip_ratio: 跳过初始数据比例
-        
-    Returns:
-        振幅和周期的元组
-    """
-    skip = int(len(states) * skip_ratio)
+def analyze_limit_cycle(states: np.ndarray) -> Tuple[float, float]:
+    """分析极限环的特征（振幅和周期）。"""
+    # 跳过初始瞬态
+    skip = int(len(states)*0.5)
     x = states[skip:, 0]
-    t_trimmed = t[skip:]
+    t = np.arange(len(x))
     
-    # 使用scipy的峰值检测
-    peaks, _ = find_peaks(x)
+    # 计算振幅（取最大值的平均）
+    peaks = []
+    for i in range(1, len(x)-1):
+        if x[i] > x[i-1] and x[i] > x[i+1]:
+            peaks.append(x[i])
+    amplitude = np.mean(peaks) if peaks else np.nan
     
-    if len(peaks) < 2:
-        return np.nan, np.nan
-    
-    peak_values = x[peaks]
-    peak_times = t_trimmed[peaks]
-    
-    amplitude = np.mean(peak_values)
-    periods = np.diff(peak_times)
-    period = np.mean(periods)
+    # 计算周期（取相邻峰值点的时间间隔平均）
+    if len(peaks) >= 2:
+        periods = np.diff(t[1:-1][np.array([x[i] > x[i-1] and x[i] > x[i+1] for i in range(1, len(x)-1)])])
+        period = np.mean(periods) if len(periods) > 0 else np.nan
+    else:
+        period = np.nan
     
     return amplitude, period
 
+
 def main():
-    # 基础参数设置
+    # Set basic parameters
     mu = 1.0
     omega = 1.0
     t_span = (0, 50)
     dt = 0.01
     initial_state = np.array([1.0, 0.0])
     
-    # 任务1 - 基础实现
+    # Task 1 - Basic implementation
     t, states = solve_ode(van_der_pol_ode, initial_state, t_span, dt, mu=mu, omega=omega)
-    plot_time_evolution(t, states, f'Van der Pol Oscillator Time Evolution (μ={mu})')
+    plot_time_evolution(t, states, f'Time Evolution of van der Pol Oscillator (μ={mu})')
     
-    # 任务2 - 参数影响分析
+    # Task 2 - Parameter influence analysis
     mu_values = [1.0, 2.0, 4.0]
-    for mu_val in mu_values:
-        t, states = solve_ode(van_der_pol_ode, initial_state, t_span, dt, mu=mu_val, omega=omega)
-        plot_time_evolution(t, states, f'Van der Pol Oscillator Time Evolution (μ={mu_val})')
-        amplitude, period = analyze_limit_cycle(t, states)
-        print(f'μ = {mu_val}: Amplitude ≈ {amplitude:.3f}, Period ≈ {period:.3f}')
+    for mu in mu_values:
+        t, states = solve_ode(van_der_pol_ode, initial_state, t_span, dt, mu=mu, omega=omega)
+        plot_time_evolution(t, states, f'Time Evolution of van der Pol Oscillator (μ={mu})')
+        amplitude, period = analyze_limit_cycle(states)
+        print(f'μ = {mu}: Amplitude ≈ {amplitude:.3f}, Period ≈ {period*dt:.3f}')
     
-    # 任务3 - 相空间分析
-    for mu_val in mu_values:
-        t, states = solve_ode(van_der_pol_ode, initial_state, t_span, dt, mu=mu_val, omega=omega)
-        plot_phase_space(states, f'Van der Pol Phase Space (μ={mu_val})')
+    # Task 3 - Phase space analysis
+    for mu in mu_values:
+        t, states = solve_ode(van_der_pol_ode, initial_state, t_span, dt, mu=mu, omega=omega)
+        plot_phase_space(states, f'Phase Space Trajectory of van der Pol Oscillator (μ={mu})')
 
 if __name__ == "__main__":
     main()
+    
