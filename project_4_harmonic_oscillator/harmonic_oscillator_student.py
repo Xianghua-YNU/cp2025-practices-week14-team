@@ -14,11 +14,11 @@ def harmonic_oscillator_ode(state: np.ndarray, t: float, omega: float = 1.0) -> 
     返回:
         np.ndarray: 形状为(2,)的数组，包含dx/dt和dv/dt
     """
-    x, v = state
     # TODO: 实现简谐振子的微分方程组
     # dx/dt = v
     # dv/dt = -omega^2 * x
-    return np.array([V,-omega**2*x])
+    x, v = state
+    return np.array([v,-omega**2*x])
 def anharmonic_oscillator_ode(state: np.ndarray, t: float, omega: float = 1.0) -> np.ndarray:
     """
     非谐振子的一阶微分方程组。
@@ -35,7 +35,7 @@ def anharmonic_oscillator_ode(state: np.ndarray, t: float, omega: float = 1.0) -
     # TODO: 实现非谐振子的微分方程组
     # dx/dt = v
     # dv/dt = -omega^2 * x^3
-    return np.array([V,-omage**2*x**3])
+    return np.array([v,-omage**2*x**3])
 
 def rk4_step(ode_func: Callable, state: np.ndarray, t: float, dt: float, **kwargs) -> np.ndarray:
     """
