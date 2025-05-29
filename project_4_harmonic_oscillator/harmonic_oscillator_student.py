@@ -35,7 +35,7 @@ def anharmonic_oscillator_ode(state: np.ndarray, t: float, omega: float = 1.0) -
     # TODO: 实现非谐振子的微分方程组
     # dx/dt = v
     # dv/dt = -omega^2 * x^3
-    return np.array([v,-omage**2*x**3])
+    return np.array([v,-omega**2*x**3])
 
 def rk4_step(ode_func: Callable, state: np.ndarray, t: float, dt: float, **kwargs) -> np.ndarray:
     """
@@ -75,7 +75,7 @@ def solve_ode(ode_func: Callable, initial_state: np.ndarray, t_span: Tuple[float
         Tuple[np.ndarray, np.ndarray]: (时间点数组, 状态数组)
     """
     # TODO: 实现ODE求解器
-    t_start,t_end=t_span
+    t_state,t_end=t_span
     t=np.arange(t_state,t_end+dt,dt)
     states=np.zeros((len(t),len(initial_state)))
     states[0]=initial_state
@@ -173,7 +173,7 @@ def main():
     periods = []
     for A in amplitudes:
         initial_state = np.array([A,0.0])
-        t,states = solve_ode(harmonic_oscillator_ode,initial_states,t_span,dt,omeaga=omega)
+        t,states = solve_ode(harmonic_oscillator_ode,initial_state,t_span,dt,omeaga=omega)
         period = analyze_period(t,states)
         periods.append(period)
         print(f'Amplitude{A}:Period = {period:.4f}')
@@ -182,7 +182,7 @@ def main():
     # 2. 分析不同振幅的影响
     for A in amplitudes:
         initial_state = np.array([A,0.0])
-        t,state = solve_ode(hatmonic_oscillator_ode,initial_state,t_span,dt,omega=omega)
+        t,state = solve_ode(harmonic_oscillator_ode,initial_state,t_span,dt,omega=omega)
         period = analyze_period(t,states)
         print(f'Anhatmonic Osillator - Amplitude{A}:Period = {period:.4f}')
         plot_time_evolution(t,states,f'Time Evolution of Anharmonic Osilator(A={A})')
@@ -195,7 +195,7 @@ def main():
     plot_phase_space(states_harmonic, 'Phase Space Trajectory of Harmonic Oscillator')
 
     t, states_anharmonic = solve_ode(anharmonic_oscillator_ode, initial_state, t_span, dt, omega=omega)
-    plot_phase_space(states_anharmonic, 'Phase Space Traject
+    plot_phase_space(states_anharmonic, 'Phase Space Traject')
 
 
 if __name__ == "__main__":
