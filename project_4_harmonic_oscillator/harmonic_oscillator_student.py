@@ -141,9 +141,9 @@ def analyze_period(t: np.ndarray, states: np.ndarray) -> float:
     if len(peaks)<2:
         return np.nan
 
-#计算相邻峰值之间的时间差的平均值
-periods=np.diff(peaks)
-return np.mean(periods)
+    #计算相邻峰值之间的时间差的平均值
+    periods=np.diff(peaks)
+    return np.mean(periods)
 
 
 def main():
